@@ -31,6 +31,6 @@ var config = {
 4. npm run start
 5. Open in browser through local host
 
-## Author
+## Authors
 - <a href="">Emily Bond</a>
 - <a href="https://github.com/nateng98">Nhat Anh Nguyen</a>
