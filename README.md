@@ -8,6 +8,8 @@ Making use of Python and SQL, this project establishes a comprehensive database 
 
 - Install pip
 
+- Install Virtual Environment
+
 - Install Flask
 
 ## Configuration
