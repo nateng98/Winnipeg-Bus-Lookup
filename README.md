@@ -4,21 +4,17 @@ Making use of Python and SQL, this project establishes a comprehensive database 
 
 ## Requirements
 
-
-
 ## Configuration
-
-
 
 ## How to run
 
-1. 
-2. 
-3. 
-4. 
-5. 
+1.
+2.
+3.
+4.
+5.
 
 ## Authors
 
-- <a href="">Emily Bond</a>
-- <a href="https://github.com/nateng98">Nhat Anh Nguyen</a>
+- [Emily Bond]()
+- [Nhat Anh Nguyen](https://github.com/nateng98)
