@@ -4,6 +4,12 @@ Making use of Python and SQL, this project establishes a comprehensive database 
 
 ## Requirements
 
+- Install Python
+
+- Install pip
+
+- Install Flask
+
 ## Configuration
 
 ## How to run
