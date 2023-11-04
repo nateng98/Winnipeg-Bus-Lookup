@@ -16,16 +16,10 @@ sudo apt install python3
 sudo apt install python3-pip
 ```
 
-- Install Virtual Environment
+- Install Flask and pyodbc (html rendering and database)
 
 ```bash
-sudo apt install virtualenv
-```
-
-- Install Flask
-
-```bash
-pip install Flask
+pip install Flask pyodbc
 ```
 
 ## Configuration
@@ -33,9 +27,8 @@ pip install Flask
 ## How to run
 
 1. `cd Winnipeg-Bus-Lookup`
-2. Activate virtual environment `source venv/bin/activate`
-3. Run python app `flask run`
-4. Open in browser [http://localhost:5000](http://localhost:5000)
+2. Run python app `flask run`
+3. Open in browser [http://localhost:5000](http://localhost:5000)
 
 ## Authors
 

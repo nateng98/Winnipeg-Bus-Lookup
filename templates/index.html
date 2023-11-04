@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Winnipeg Bus Lookup</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <h1>Demo</h1>
+  <form action="/" method="post" onsubmit="clearInput()">
+    <label for="user_input">Enter your name:</label>
+    <input type="text" id="user_input" name="user_input">
+    <input type="submit" value="Submit">
+  </form>
+
+  {% if combinedStr %}
+    <h1>{{ combinedStr }}</h1>
+  {% endif %}
+</body>
+</html>
+
