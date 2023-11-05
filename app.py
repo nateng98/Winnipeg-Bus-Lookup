@@ -1,34 +1,36 @@
-from flask import Flask, render_template, request
-import pyodbc
+"""
+Connects to a SQL database using pyodbc
+"""
+from flask import Flask, render_template
+import pyodbc as odbc
 
 app = Flask(__name__)
 
 #  Your connection details
-server_name = 'your_server_name'
-database_name = 'your_database_name'
-username = 'your_username'
-password = 'your_password'
+driver_name = 'SQL SERVER'
+server_name = 'DESKTOP-310T804'
+database_name = 'products'
 
 # Create connection string
-connection_string = f'DRIVER={{SQL Server}};' \
-                    f'SERVER={server_name};' \
-                    f'DATABASE={database_name}'; \
-                    f'UID={username}'; \
-                    f'PWD={password}'
+connection_string = f'DRIVER={{{driver_name}}};SERVER={server_name};DATABASE={database_name};TrustServerCertificate=yes'
 
-@app.route('/', methods=['GET','POST'])
-def index():
-  combinedStr = None
+@app.route('/')
+def home():
+  return render_template('index.html')
+
+@app.route('/display_table')
+def display_table():
   
-  if request.method == 'POST':
-    userInput = request.form['user_input']
-    if len(userInput) != 0:
-      predefinedStr = "Hello, "
-    else:
-      predefinedStr = ""
-    combinedStr = predefinedStr + userInput
-    
-  return render_template('index.html', combinedStr=combinedStr)
+  conn = odbc.connect(connection_string)
+  cursor = conn.cursor()
+
+  cursor.execute("SELECT * FROM people")
+  table_rows = cursor.fetchall()
+
+  cursor.close()
+  conn.close()
+
+  return render_template('display_table.html', table_rows=table_rows)
 
 if __name__ == '__main__':
   app.run(debug=True)
