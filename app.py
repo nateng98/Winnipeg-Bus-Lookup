@@ -21,7 +21,7 @@ def home():
 @app.route('/display_table')
 def display_table():
   
-  conn = odbc.connect(connection_string)
+  conn = odbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER=DESKTOP-310T804;DATABASE=products;LongAsMax=yes;Encrypt=no;Trusted_Connection=yes;')
   cursor = conn.cursor()
 
   cursor.execute("SELECT * FROM people")
