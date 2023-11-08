@@ -1,3 +1,8 @@
+// window.onload = function() {
+//   const element = document.getElementById('closePopup');
+//   element.classList.add('hidden');
+// };
+
 document.addEventListener("DOMContentLoaded", function () {
   const openPopupBtn = document.getElementById("openPopup");
   const closePopupBtn = document.getElementById("closePopup");

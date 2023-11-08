@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Winnipeg Bus Lookup</title>
+    <title>Testing</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/style.css') }}"
     />
   </head>
   <body>
-    <h1>Welcome to the Main Page</h1>
+    <h1>Testing Queries</h1>
     <div class="form_container">
       <form id="queryForm" action="/query1" method="post">
         <input type="submit" value="Query 1" />
@@ -24,12 +24,17 @@
       <form action="/query4" method="post">
         <input type="submit" value="Query 4" />
       </form>
+      <form action="/query5" method="post">
+        <label for="province">provinceID: </label>
+        <input type="text" id="province" name="province" required />
+        <input type="submit" value="Query 5" />
+      </form>
     </div>
 
     {# result #}
     <div id="popupContainer">
+      <button id="closePopup">X</button>
       <div id="popupContent">
-        <button id="closePopup">X</button>
         <table border="1">
           <tr>
             {% for col in columns %}

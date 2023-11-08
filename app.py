@@ -96,5 +96,28 @@ def query4():
     
   return render_template('index.html', columns=columns, result=result)
 
+@app.route('/query5', methods=['POST'])
+def query5():
+  provinceID = request.form['province']
+  cursor = conn.cursor()
+  cursor.execute(f'''
+                  SELECT DISTINCT cast(prodName as VARCHAR) as prodName
+                  FROM products p
+                  INNER JOIN viewed v ON p.productID = v.productID
+                  INNER JOIN people pe ON v.personID = pe.personID
+                  LEFT JOIN (
+                      SELECT ioo.productID, o.personID
+                      FROM orderLineItems ioo
+                      INNER JOIN orders o ON ioo.orderID = o.orderID
+                  ) o ON p.productID = o.productID AND v.personID = o.personID
+                  WHERE pe.provinceID = '{provinceID}';
+                   ''')
+  result = cursor.fetchall()
+    
+  # Get the column names from cursor description
+  columns = [column[0] for column in cursor.description]
+    
+  return render_template('index.html', columns=columns, result=result)
+
 if __name__ == '__main__':
   app.run(debug=True)
