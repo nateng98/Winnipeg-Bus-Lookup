@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const popupContainer = document.getElementById("popupContainer");
 
   // openPopupBtn.addEventListener("click", function () {
-  //   preventDefault();
   //   popupContainer.classList.remove("hidden");
   //   console.log("add");
   // });
