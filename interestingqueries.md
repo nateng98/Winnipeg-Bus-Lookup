@@ -1,49 +1,49 @@
-1. This query will retrieve the names of bus routes, bus stops, and the count of pass-ups for each combination of route and stop where there have been pass-ups. If there haven't been any pass-ups at a particular route-stop combination, it won't be included in the results.
+1. retrieve the names of bus routes, bus stops, and the count of pass-ups for each combination of route and stop where there have been pass-ups. If there haven't been any pass-ups at a particular route-stop combination, it won't be included in the results.
 
 ```sql
-SELECT bus_routes.route_name, bus_stops.stop_name, COUNT(pass_ups.pass_up_id) AS pass_up_count
-FROM buses
-JOIN bus_routes ON buses.route_id = bus_routes.route_id
-JOIN bus_stops ON buses.stop_id = bus_stops.stop_id
-LEFT JOIN pass_ups ON buses.bus_id = pass_ups.bus_id
-GROUP BY bus_routes.route_name, bus_stops.stop_name
-HAVING COUNT(pass_ups.pass_up_id) > 0
+select bus_routes.route_name, bus_stops.stop_name, COUNT(pass_ups.pass_up_id) as pass_up_count
+from buses
+join bus_routes on buses.route_id = bus_routes.route_id
+join bus_stops on buses.stop_id = bus_stops.stop_id
+left join pass_ups on buses.bus_id = pass_ups.bus_id
+group by bus_routes.route_name, bus_stops.stop_name
+having COUNT(pass_ups.pass_up_id) > 0
 ```
 
 2. we're selecting information about bus routes, route branches, bus stops, and pass-ups. We're also calculating aggregate statistics such as the pass-up count, average temperature, and maximum wind gust.
 
-The query includes joins across multiple tables, conditional joins, aggregation functions, grouping, a HAVING clause for filtering grouped results, and an ORDER BY clause to sort the results based on pass-up count.
+The query includes joins across multiple tables, conditional joins, aggregation functions, grouping, a having clause for filtering grouped results, and an order by clause to sort the results based on pass-up count.
 
 ```sql
-SELECT 
+select 
     br.route_num, 
-    br.name AS route_name,
+    br.name as route_name,
     rb.destination, 
     bs.stop_name,
-    COUNT(pu.pu_id) AS pass_up_count,
-    AVG(dw.averageTemp) AS avg_temperature,
-    MAX(dw.maxWindGust) AS max_wind_gust
-FROM 
+    COUNT(pu.pu_id) as pass_up_count,
+    AVG(dw.averageTemp) as avg_temperature,
+    MAX(dw.maxWindGust) as max_wind_gust
+from 
     BusRoute br
-JOIN 
-    RouteBranch rb ON br.route_num = rb.route_num
-JOIN 
-    Contains c ON br.route_num = c.routeNum AND rb.destination = c.Destination
-JOIN 
-    BusStop bs ON c.BusStopID = bs.bs_id
-LEFT JOIN 
-    Pass_up pu ON br.route_num = pu.routeNum AND rb.destination = pu.destination
-LEFT JOIN 
-    DailyWeather dw ON pu.date = dw.date
-GROUP BY 
+join 
+    RouteBranch rb on br.route_num = rb.route_num
+join 
+    Contains c on br.route_num = c.routeNum and rb.destination = c.Destination
+join 
+    BusStop bs on c.BusStopID = bs.bs_id
+left join 
+    Pass_up pu on br.route_num = pu.routeNum and rb.destination = pu.destination
+left join 
+    DailyWeather dw on pu.date = dw.date
+group by 
     br.route_num, 
     br.name, 
     rb.destination, 
     bs.stop_name
-HAVING 
+having 
     COUNT(pu.pu_id) > 10
-ORDER BY 
-    pass_up_count DESC
+order by 
+    pass_up_count desc
 ```
 
 3. we're using three CTEs:
@@ -51,61 +51,60 @@ ORDER BY
 PassUpCounts: This CTE calculates the pass-up counts for each route and destination combination.
 MaxPassUp: This CTE calculates the maximum pass-up count across all routes and destinations.
 RoutesWithMaxPassUp: This CTE identifies the routes and destinations with the maximum pass-up count.
-The final SELECT statement combines information from the BusRoute, RouteBranch, Contains, and BusStop tables, and also includes the pass-up count. It uses LEFT JOINs and COALESCE to handle cases where there may be no pass-up counts available.
+The final select statement combines information from the BusRoute, RouteBranch, Contains, and BusStop tables, and also includes the pass-up count. It uses left joins and COALESCE to handle cases where there may be no pass-up counts available.
 
 ```sql
-WITH PassUpCounts AS (
-    SELECT
+WITH PassUpCounts as (
+    select
         br.route_num,
         rb.destination,
-        COUNT(pu.pu_id) AS pass_up_count
-    FROM
+        COUNT(pu.pu_id) as pass_up_count
+    from
         BusRoute br
-    JOIN
-        RouteBranch rb ON br.route_num = rb.route_num
-    LEFT JOIN
-        Pass_up pu ON br.route_num = pu.routeNum AND rb.destination = pu.destination
-    GROUP BY
+    join
+        RouteBranch rb on br.route_num = rb.route_num
+    left join
+        Pass_up pu on br.route_num = pu.routeNum and rb.destination = pu.destination
+    group by
         br.route_num,
         rb.destination
 ),
 
-MaxPassUp AS (
-    SELECT
-        MAX(pass_up_count) AS max_pass_up_count
-    FROM
+MaxPassUp as (
+    select
+        MAX(pass_up_count) as max_pass_up_count
+    from
         PassUpCounts
 ),
 
-RoutesWithMaxPassUp AS (
-    SELECT
+RoutesWithMaxPassUp as (
+    select
         pc.route_num,
         pc.destination,
         pc.pass_up_count
-    FROM
+    from
         PassUpCounts pc
-    JOIN
-        MaxPassUp mp ON pc.pass_up_count = mp.max_pass_up_count
+    join
+        MaxPassUp mp on pc.pass_up_count = mp.max_pass_up_count
 )
 
-SELECT
+select
     r.route_num,
-    r.name AS route_name,
     rb.destination,
     bs.stop_name,
-    COALESCE(pc.pass_up_count, 0) AS pass_up_count
-FROM
+    COALESCE(pc.pass_up_count, 0) as pass_up_count
+from
     BusRoute r
-JOIN
-    RouteBranch rb ON r.route_num = rb.route_num
-JOIN
-    Contains c ON r.route_num = c.routeNum AND rb.destination = c.Destination
-JOIN
-    BusStop bs ON c.BusStopID = bs.bs_id
-LEFT JOIN
-    RoutesWithMaxPassUp pc ON r.route_num = pc.route_num AND rb.destination = pc.destination
-ORDER BY
-    pass_up_count DESC;
+join
+    RouteBranch rb on r.route_num = rb.route_num
+join
+    Contains c on r.route_num = c.routeNum and rb.destination = c.Destination
+join
+    BusStop bs on c.BusStopID = bs.bs_id
+left join
+    RoutesWithMaxPassUp pc on r.route_num = pc.route_num and rb.destination = pc.destination
+order by
+    pass_up_count desc;
 ```
 
 3. we're using several CTEs:
@@ -117,153 +116,263 @@ AverageTemperature: Calculates the average temperature for each date with at lea
 BusRoutesWithGoodWeather: Joins bus route information with pass-up counts and average temperatures.
 Finally, we select the results from BusRoutesWithGoodWeather and add a calculated column called situation that categorizes routes based on pass-up counts and average temperatures. The results are then ordered by pass-up count and average temperature in descending order.
 ```sql
-WITH PassUpCounts AS (
-    SELECT
+with PassUpCounts as (
+    select
         br.route_num,
         rb.destination,
-        COUNT(pu.pu_id) AS pass_up_count
-    FROM
-        BusRoute br
-    JOIN
-        RouteBranch rb ON br.route_num = rb.route_num
-    LEFT JOIN
-        Pass_up pu ON br.route_num = pu.routeNum AND rb.destination = pu.destination
-    GROUP BY
+        COUNT(pu.pu_id) as pass_up_count from BusRoute br
+    join RouteBranch rb on br.route_num = rb.route_num
+    left join Pass_up pu on br.route_num = pu.routeNum and rb.destination = pu.destination
+    group by
         br.route_num,
         rb.destination
 ),
-
-MaxPassUp AS (
-    SELECT
-        MAX(pass_up_count) AS max_pass_up_count
-    FROM
-        PassUpCounts
+MaxPassUp as (
+    select MAX(pass_up_count) as max_pass_up_count
+    from PassUpCounts
 ),
-
-RoutesWithMaxPassUp AS (
-    SELECT
+RoutesWithMaxPassUp as (
+    select
         pc.route_num,
         pc.destination,
-        pc.pass_up_count
-    FROM
-        PassUpCounts pc
-    JOIN
-        MaxPassUp mp ON pc.pass_up_count = mp.max_pass_up_count
+        pc.pass_up_count from PassUpCounts pc
+    join MaxPassUp mp on pc.pass_up_count = mp.max_pass_up_count
 ),
-
-AverageTemperature AS (
-    SELECT
+AverageTemperature as (
+    select
         date,
-        AVG(averageTemp) AS avg_temperature
-    FROM
-        DailyWeather
-    GROUP BY
-        date
-    HAVING
-        COUNT(*) >= 5
+        AVG(averageTemp) as avg_temperature from DailyWeather
+    group by date
+    having COUNT(*) >= 5
 ),
-
-BusRoutesWithGoodWeather AS (
-    SELECT
+BusRoutesWithGoodWeather as (
+    select
         br.route_num,
-        br.name AS route_name,
+        br.name as route_name,
         rb.destination,
         bs.stop_name,
-        COALESCE(pc.pass_up_count, 0) AS pass_up_count,
-        at.avg_temperature
-    FROM
-        BusRoute br
-    JOIN
-        RouteBranch rb ON br.route_num = rb.route_num
-    JOIN
-        Contains c ON br.route_num = c.routeNum AND rb.destination = c.Destination
-    JOIN
-        BusStop bs ON c.BusStopID = bs.bs_id
-    LEFT JOIN
-        RoutesWithMaxPassUp pc ON br.route_num = pc.route_num AND rb.destination = pc.destination
-    JOIN
-        AverageTemperature at ON pu.date = at.date
+        COALESCE(pc.pass_up_count, 0) as pass_up_count,
+        at.avg_temperature from BusRoute br
+    natural join RouteBranch rb 
+    join Contains c on br.route_num = c.routeNum and rb.destination = c.Destination
+    natural join BusStop bs on c.BusStopID = bs.bs_id
+    left join RoutesWithMaxPassUp pc on br.route_num = pc.route_num and rb.destination = pc.destination
+    natural join AverageTemperature 
 )
-
-SELECT
+select
     *,
-    CASE
-        WHEN pass_up_count > 5 AND avg_temperature > 25 THEN 'High Pass-Up and Hot Weather'
-        WHEN pass_up_count > 5 THEN 'High Pass-Up'
-        WHEN avg_temperature > 25 THEN 'Hot Weather'
-        ELSE 'Normal'
-    END AS situation
-FROM
-    BusRoutesWithGoodWeather
-ORDER BY
-    pass_up_count DESC, avg_temperature DESC;
+    case
+        when pass_up_count > 5 and avg_temperature > 25 then 'High Pass-Up and Hot Weather'
+        when pass_up_count > 5 then 'High Pass-Up'
+        when avg_temperature > 25 then 'Hot Weather'
+        else 'Normal'
+    end as situation from BusRoutesWithGoodWeather
+order by pass_up_count desc, avg_temperature desc;
 ```
 
 4. In this query, we're joining the Arrival table with the BusRoute and RouteBranch tables based on the route number and destination. We've added a condition to filter for a specific route and destination.
 
-The query categorizes arrivals into 'late', 'early', and 'on time' based on the deviation value, and then groups the results by deviation category, route number, route name, and destination. We've also included a HAVING clause to filter for cases where the deviation count is greater than 5.
+The query categorizes arrivals into 'late', 'early', and 'on time' based on the deviation value, and then groups the results by deviation category, route number, route name, and destination. We've also included a having clause to filter for cases where the deviation count is greater than 5.
 ```sql
-SELECT
-    CASE
-        WHEN a.deviation > 0 THEN 'late'
-        WHEN a.deviation < 0 THEN 'early'
-        ELSE 'on time'
-    END AS deviation_category,
+select
+    case
+        when a.deviation > 0 then 'late'
+        when a.deviation < 0 then 'early'
+        else 'on time'
+    end as deviation_category,
     br.route_num,
-    br.name AS route_name,
-    rb.destination,
-    COUNT(*) AS deviation_count
-FROM
+    br.name as route_name,
+    rb.destination
+from
     Arrival a
-JOIN
-    BusRoute br ON a.route_num = br.route_num
-JOIN
-    RouteBranch rb ON a.route_num = rb.route_num AND a.destination = rb.destination
-WHERE
+join
+    BusRoute br on a.route_num = br.route_num
+join
+    RouteBranch rb on a.route_num = rb.route_num and a.destination = rb.destination
+where
     br.route_num = 'YourRouteNumber' -- Replace with your specific route number
-    AND rb.destination = 'YourDestination' -- Replace with your specific destination
-GROUP BY
+    and rb.destination = 'YourDestination' -- Replace with your specific destination
+group by
     deviation_category,
     br.route_num,
     br.name,
     rb.destination
-HAVING
+having
     COUNT(*) > 5
 ```
 
 5. we're retrieving information about deviations (deviation) and expected arrival times (expectedTime) from the Arrival table. We're also including the corresponding average temperature (averageTemp) from the DailyWeather table.
 
-The JOIN clause connects the Arrival and DailyWeather tables based on the date column. We're also using a WHERE clause to filter for cases where there is a deviation (deviation IS NOT NULL) and where the average temperature is less than or equal to 20 degrees Celsius (dw.averageTemp <= 20).
+The join clause connects the Arrival and DailyWeather tables based on the date column. We're also using a where clause to filter for cases where there is a deviation (deviation is not null) and where the average temperature is less than or equal to 20 degrees Celsius (dw.averageTemp <= 20).
 
 ```sql
-SELECT
+select
     a.deviation,
     a.expectedTime,
     dw.averageTemp
-FROM
+from
     Arrival a
-JOIN
-    DailyWeather dw ON a.date = dw.date
-WHERE
-    a.deviation IS NOT NULL
-    AND dw.averageTemp <= 20
+join
+    DailyWeather dw on a.date = dw.date
+where
+    a.deviation is not null
+    and dw.averageTemp <= 20
 ```
 
-6. we're using the YEAR function to extract the year from the date column. We then use a CASE statement to categorize the average deviation into 'good', 'bad', and 'ok'. If the average deviation is greater than 5, it's categorized as 'bad'. If it's less than 2, it's categorized as 'good'. Otherwise, it's categorized as 'ok'.
+6. we're using the YEAR function to extract the year from the date column. We then use a case statement to categorize the average deviation into 'good', 'bad', and 'ok'. If the average deviation is greater than 5, it's categorized as 'bad'. If it's less than 2, it's categorized as 'good'. Otherwise, it's categorized as 'ok'.
 
 The query groups the results by year and deviation category, and counts the number of occurrences for each combination.
+
+Average deviation of each year, then categorize into 'good', 'bad', 'ok'. If it's less than 2, it's categorized as 'good'. Otherwise, it's categorized as 'ok'.
 ```sql
-SELECT
-    YEAR(a.date) AS year,
-    CASE
-        WHEN AVG(a.deviation) > 5 THEN 'bad'
-        WHEN AVG(a.deviation) < 2 THEN 'good'
-        ELSE 'ok'
-    END AS deviation_category,
-    COUNT(*) AS year_count
-FROM
-    Arrival a
-GROUP BY
-    YEAR(a.date),
-    deviation_category
+select year(t.date)
+    case 
+        when AVG(deviation) > 5 then 'bad'
+        when AVG(deviation) < 2 then 'good'
+        else 'ok'
+    end as dev
+    count(*) from Arrival as a
+left join time_table as t on t.id = a.id 
+group by
+    year(t.date), dev
+```
+find the most popular bus stop for the route with the highest traffic count
+```sql
+WITH RouteTrafficCount as (
+    select
+        R.route_num,
+        R.name as route_name,
+        COUNT(*) as total_traffic_count from BusRoute R
+    natural join RouteBranch RB on 
+    natural join Drives D 
+    natural join Traffic T 
+    group by R.route_num, R.name
+    order by total_traffic_count desc
+    LIMIT 1
+)
+select
+    RTC.route_num,
+    RTC.route_name,
+    RTC.total_traffic_count,
+    BS.str_name as most_popular_bus_stop from RouteTrafficCount RTC
+natural join RouteBranch RB 
+natural join Contains C 
+natural join BusStop BS 
+where C.routeNum = RTC.route_num
+group by RTC.route_num, RTC.route_name, RTC.total_traffic_count, BS.str_name
+```
+
+PassUpCounts - calculates the pass-up counts for each route and destination
+MaxPassUp - calculates the maximum pass-up count across all routes and destinations
+RoutesWithMaxPassUp - identifies the routes and destinations with the maximum pass-up count
+Then combines information from the BusRoute, RouteBranch, Contains, and BusStop tables, and also includes the pass-up count
+```sql
+with PassUpCounts as (
+    select
+        br.route_num,
+        rb.destination,
+        COUNT(pu.pu_id) as pass_up_count from BusRoute br
+    natural join RouteBranch rb 
+    left join Pass_up pu on br.route_num = pu.routeNum and rb.destination = pu.destination
+    group by
+        br.route_num,
+        rb.destination
+),
+MaxPassUp as (
+    select MAX(pass_up_count) as max_pass_up_count from PassUpCounts
+),
+RoutesWithMaxPassUp as (
+    select
+        pc.route_num,
+        pc.destination,
+        pc.pass_up_count from PassUpCounts pc
+    natural join MaxPassUp mp 
+)
+select
+    r.route_num,
+    rb.destination,
+    bs.stop_name,
+    --coalesce: replace null with 0
+    coalesce(pc.pass_up_count, 0) as pass_up_count from BusRoute r
+natural join RouteBranch rb 
+join Contains c on r.route_num = c.routeNum and rb.destination = c.Destination
+natural join BusStop bs 
+left join RoutesWithMaxPassUp pc on r.route_num = pc.route_num and rb.destination = pc.destination
+order by
+    pass_up_count desc;
+```
+
+similar to the one above but with temperature
+```sql
+with PassUpCounts as (
+    select
+        br.route_num,
+        rb.destination,
+        COUNT(pu.pu_id) as pass_up_count from BusRoute br
+    natural join RouteBranch rb 
+    left join Pass_up pu on br.route_num = pu.routeNum and rb.destination = pu.destination
+    group by
+        br.route_num,
+        rb.destination
+),
+MaxPassUp as (
+    select MAX(pass_up_count) as max_pass_up_count
+    from PassUpCounts
+),
+RoutesWithMaxPassUp as (
+    select
+        pc.route_num,
+        pc.destination,
+        pc.pass_up_count from PassUpCounts pc
+    natural join MaxPassUp mp 
+),
+AverageTemperature as (
+    select
+        date,
+        AVG(averageTemp) as avg_temperature from DailyWeather
+    group by date
+    having COUNT(*) >= 5
+),
+BusRoutesWithBadWeather as (
+    select
+        br.route_num,
+        br.name as route_name,
+        rb.destination,
+        bs.stop_name,
+        COALESCE(pc.pass_up_count, 0) as pass_up_count,
+        at.avg_temperature from BusRoute br
+    natural join RouteBranch rb 
+    join Contains c on br.route_num = c.routeNum and rb.destination = c.Destination
+    natural join BusStop bs on c.BusStopID = bs.bs_id
+    left join RoutesWithMaxPassUp pc on br.route_num = pc.route_num and rb.destination = pc.destination
+    natural join AverageTemperature 
+)
+select
+    *,
+    case
+        when pass_up_count > 5 and avg_temperature < 0 then 'High Pass-Up and Cold Weather'
+        when pass_up_count > 5 then 'High Pass-Up'
+        when avg_temperature < 0 then 'Cold Weather'
+        else 'Normal'
+    end as situation from BusRoutesWithBadWeather
+order by pass_up_count desc, avg_temperature desc;
+```
+
+search by busroute and a destination, see whether it comes late, early or on time
+```sql
+select
+    case
+        when a.deviation > 0 then 'late'
+        when a.deviation < 0 then 'early'
+        else 'on time'
+    end as deviation_category,
+    br.route_num,
+    rb.destination from Arrival a
+natural join BusRoute br 
+join RouteBranch rb on a.route_num = rb.route_num and a.destination = rb.destination
+where br.route_num = ? and rb.destination = ?
+group by
+    deviation_category,
+    br.route_num,
+    rb.destination
 ```

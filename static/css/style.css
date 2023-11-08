@@ -1,4 +1,4 @@
-*{
+* {
   font-family: Arial, sans-serif;
   background-color: #ceaeae;
   margin: 0;
@@ -6,10 +6,52 @@
 }
 
 body {
-  
   text-align: center;
 }
 
 h1 {
   color: #333;
 }
+
+.hidden {
+  display: none;
+}
+
+.form_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* #popupContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+#popupContent {
+    text-align: center;
+}
+
+button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+table {
+    margin-top: 20px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+} */
