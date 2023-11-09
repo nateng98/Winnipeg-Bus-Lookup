@@ -13,6 +13,23 @@ h1 {
   color: #333;
 }
 
+/*============== Home Page ==============*/
+.container {
+  display: flex;
+}
+
+.left-div {
+  flex-basis: 40%;
+}
+
+.left-div img {
+  width: 100%
+}
+
+.right-div {
+  flex-basis: 55%;
+}
+
 /*============== Displaying SQL tables ==============*/
 .hidden {
   display: none;

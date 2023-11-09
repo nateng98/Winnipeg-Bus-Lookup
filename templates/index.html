@@ -12,6 +12,7 @@
   <body>
     {# Header #}
     <header>
+      <h1>Winnipeg Bus Lookup</h1>
       <nav>
       </nav>
     </header>
@@ -19,7 +20,7 @@
     {# Main #}
     <div class="container">
       <div class="left-div">
-        
+        <img src="{{ url_for('static', filename='img/bus.png') }}" alt="Bus">
       </div>
       <div class="right-div">
         <a href="{{ url_for('display_table', filename='display.html') }}">Display</a>
