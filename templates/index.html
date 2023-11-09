@@ -10,47 +10,21 @@
     />
   </head>
   <body>
-    <h1>Testing Queries</h1>
-    <div class="form_container">
-      <form id="queryForm" action="/query1" method="post">
-        <input type="submit" value="Query 1" />
-      </form>
-      <form action="/query2" method="post">
-        <input type="submit" value="Query 2" />
-      </form>
-      <form action="/query3" method="post">
-        <input type="submit" value="Query 3" />
-      </form>
-      <form action="/query4" method="post">
-        <input type="submit" value="Query 4" />
-      </form>
-      <form action="/query5" method="post">
-        <label for="province">provinceID: </label>
-        <input type="text" id="province" name="province" required />
-        <input type="submit" value="Query 5" />
-      </form>
-    </div>
+    {# Header #}
+    <header>
+      <nav>
+      </nav>
+    </header>
 
-    {# result #}
-    <div id="popupContainer">
-      <button id="closePopup">X</button>
-      <div id="popupContent">
-        <table border="1">
-          <tr>
-            {% for col in columns %}
-            <th>{{ col }}</th>
-            {% endfor %}
-          </tr>
-          {% for row in result %}
-          <tr>
-            {% for val in row %}
-            <td>{{ val }}</td>
-            {% endfor %}
-          </tr>
-          {% endfor %}
-        </table>
+    {# Main #}
+    <div class="container">
+      <div class="left-div">
+        
+      </div>
+      <div class="right-div">
+        <a href="{{ url_for('display_table', filename='display.html') }}">Display</a>
       </div>
     </div>
-    <script src="/static/js/script.js"></script>
+    {# End Main #}
   </body>
 </html>

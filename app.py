@@ -21,15 +21,9 @@ cursor = conn.cursor()
 def home():
   return render_template('index.html')
 
-# @app.route('/display_table')
-# def display_table():
-
-
-#   cursor.execute("SELECT * FROM people")
-#   table_rows = cursor.fetchall()
-
-#   cursor.close()
-#   conn.close()
+@app.route('/display')
+def display_table():
+  return render_template('display.html')
 
 #   return render_template('display_table.html', table_rows=table_rows)
 @app.route('/query1', methods=['POST'])
@@ -41,7 +35,7 @@ def query1():
   # Get the column names from cursor description
   columns = [column[0] for column in cursor.description]
     
-  return render_template('index.html', columns=columns, result=result)
+  return render_template('display.html', columns=columns, result=result)
 
 @app.route('/query2', methods=['POST'])
 def query2():
@@ -52,27 +46,27 @@ def query2():
   # Get the column names from cursor description
   columns = [column[0] for column in cursor.description]
     
-  return render_template('index.html', columns=columns, result=result)
+  return render_template('display.html', columns=columns, result=result)
   
 @app.route('/query3', methods=['POST'])
 def query3():
   cursor = conn.cursor()
   cursor.execute('''
-                    SELECT cast(people.firstname as VARCHAR) as firstname, cast(people.lastname as VARCHAR) as lastname FROM people
-                    WHERE people.provinceID = 'MB'
-                    EXCEPT
-                    SELECT cast(people.firstname as VARCHAR), cast(people.lastname as VARCHAR) FROM people
-                    INNER JOIN orders ON people.personID = orders.personID
-                    INNER JOIN orderLineItems ON orders.orderID = orderLineItems.orderID
-                    INNER JOIN products ON orderLineItems.productID = products.productID
-                    WHERE products.price > 99
-                   ''')
+                  SELECT cast(people.firstname as VARCHAR) as firstname, cast(people.lastname as VARCHAR) as lastname FROM people
+                  WHERE people.provinceID = 'MB'
+                  EXCEPT
+                  SELECT cast(people.firstname as VARCHAR), cast(people.lastname as VARCHAR) FROM people
+                  INNER JOIN orders ON people.personID = orders.personID
+                  INNER JOIN orderLineItems ON orders.orderID = orderLineItems.orderID
+                  INNER JOIN products ON orderLineItems.productID = products.productID
+                  WHERE products.price > 99
+                  ''')
   result = cursor.fetchall()
     
   # Get the column names from cursor description
   columns = [column[0] for column in cursor.description]
     
-  return render_template('index.html', columns=columns, result=result)
+  return render_template('display.html', columns=columns, result=result)
 
 @app.route('/query4', methods=['POST'])
 def query4():
@@ -88,13 +82,13 @@ def query4():
                       INNER JOIN orders o ON ioo.orderID = o.orderID
                   ) o ON p.productID = o.productID AND v.personID = o.personID
                   WHERE pe.provinceID = 'MB';
-                   ''')
+                  ''')
   result = cursor.fetchall()
     
   # Get the column names from cursor description
   columns = [column[0] for column in cursor.description]
     
-  return render_template('index.html', columns=columns, result=result)
+  return render_template('display.html', columns=columns, result=result)
 
 @app.route('/query5', methods=['POST'])
 def query5():
@@ -111,13 +105,13 @@ def query5():
                       INNER JOIN orders o ON ioo.orderID = o.orderID
                   ) o ON p.productID = o.productID AND v.personID = o.personID
                   WHERE pe.provinceID = '{provinceID}';
-                   ''')
+                  ''')
   result = cursor.fetchall()
     
   # Get the column names from cursor description
   columns = [column[0] for column in cursor.description]
     
-  return render_template('index.html', columns=columns, result=result)
+  return render_template('display.html', columns=columns, result=result)
 
 if __name__ == '__main__':
   app.run(debug=True)

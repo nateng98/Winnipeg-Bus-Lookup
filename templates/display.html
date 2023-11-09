@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Display SQL Database Table</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+
+  <body>
+    <h1>Testing Queries</h1>
+    <a href="{{ url_for('home', filename='index.html') }}">Back</a>
+
+    {# Lists of queries #}
+    <div class="form_container">
+      <form id="queryForm" action="/query1" method="post">
+        <input type="submit" value="Query 1" />
+      </form>
+      <form action="/query2" method="post">
+        <input type="submit" value="Query 2" />
+      </form>
+      <form action="/query3" method="post">
+        <input type="submit" value="Query 3" />
+      </form>
+      <form action="/query4" method="post">
+        <input type="submit" value="Query 4" />
+      </form>
+      <form action="/query5" method="post">
+        <label for="province">provinceID: </label>
+        <input type="text" id="province" name="province" required />
+        <input type="submit" value="Query 5" />
+      </form>
+    </div>
+
+    {# result #}
+    <div id="popupContainer">
+      <button id="closePopup">X</button>
+      <div id="popupContent">
+        <table border="1">
+          <tr>
+            {% for col in columns %}
+            <th>{{ col }}</th>
+            {% endfor %}
+          </tr>
+          {% for row in result %}
+          <tr>
+            {% for val in row %}
+            <td>{{ val }}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+    <script src="/static/js/script.js"></script>
+  </body>
+</html>
