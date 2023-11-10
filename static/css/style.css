@@ -1,6 +1,6 @@
 :root {
-  --yellow: #ffc100;
-  --lightgrey: #ccc;
+  --navy: rgb(27, 60, 131);
+  --blueButton: rgb(#3386b3);
 }
 
 * {
@@ -29,10 +29,6 @@ body {
   padding: 0;
 }
 
-h1 {
-  color: #333;
-}
-
 /*--------------------------------------------------------------
 # Header
 --------------------------------------------------------------*/
@@ -41,16 +37,11 @@ h1 {
   transition: all 0.5s;
   z-index: 997;
   transition: all 0.5s;
-  background: #1e4356;
+  background: var(--navy);
 }
 
 #header.header-transparent {
   background: none;
-}
-
-#header.header-scrolled {
-  background: rgba(30, 67, 86, 0.8);
-  height: 60px;
 }
 
 #header .logo {
@@ -155,8 +146,8 @@ h1 {
   height: 95%;
   background: linear-gradient(
       to right,
-      rgba(10, 38, 53, 0.9),
-      rgba(9, 55, 78, 0.8)
+      rgba(26, 48, 112, 0.9),
+      rgba(17, 57, 97, 0.8)
     ),
     url("../img/wpgbus.jpg") center top no-repeat;
   z-index: 0;
@@ -204,20 +195,6 @@ h1 {
   color: #fff;
 }
 
-/* #hero .carousel-control-prev,
-#hero .carousel-control-next {
-  width: 10%;
-}
-
-#hero .carousel-control-next-icon,
-#hero .carousel-control-prev-icon {
-  background: none;
-  font-size: 48px;
-  line-height: 1;
-  width: auto;
-  height: auto;
-} */
-
 #hero .btn-get-started {
   font-weight: 500;
   font-size: 14px;
@@ -230,11 +207,11 @@ h1 {
   margin: 10px;
   color: #fff;
   animation-delay: 0.8s;
-  border: 2px solid #68a4c4;
+  border: 2px solid rgb(73, 138, 212);
 }
 
 #hero .btn-get-started:hover {
-  background: #68a4c4;
+  background: rgb(73, 138, 212);
   color: #fff;
   text-decoration: none;
 }
