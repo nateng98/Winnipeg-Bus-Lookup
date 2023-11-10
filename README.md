@@ -18,10 +18,10 @@ sudo apt install python3
 sudo apt install python3-pip
 ```
 
-- Install Flask and pypyodbc (html rendering and database)
+- Install Flask and pyodbc (html rendering and database)
 
 ```bash
-pip install Flask pypyodbc
+pip install Flask pyodbc
 ```
 
 ## Configuration
