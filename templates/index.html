@@ -11,7 +11,7 @@
   </head>
   <body>
     {# Header #}
-    <header>
+    <header id="header">
       <h1>Winnipeg Bus Lookup</h1>
       <nav>
       </nav>
@@ -23,17 +23,26 @@
         <img src="{{ url_for('static', filename='img/bus.png') }}" alt="Bus">
       </div>
       <div class="right-div">
-        <h3>Overview</h3>
-        <div class="text_background"></div>
-        <div>
-          <p>this project establishes a comprehensive database for accessing Winnipeg 
-          bus schedules and weather information in the past, offering valuable insights 
-          into the impact of weather on public transportation efficiency in Winnipeg.</p>
+        <h2>Overview</h2>
+        <div id="textBg1" class="text_background"></div>
+        <div id="textDiv" class="overview">
+          <p>The "Winnipeg Bus Lookup" is an ambitious undertaking aimed at creating 
+          an expansive and user-friendly database system, facilitating convenient access
+          to Winnipeg bus schedules, traffics and weather data in the past. This integrated 
+          resource is poised to deliver invaluable insights into how weather conditions 
+          and traffics have influenced the efficiency and reliability of public transportation 
+          services within the city. This initiative holds great potential for researchers, 
+          urban planners, and transit authorities, empowering them with the ability to 
+          scrutinize trends, identify patterns, and make informed decisions aimed at 
+          optimizing the delivery of public transportation services in Winnipeg.</p>
+          <div class="link">
+            <a href="{{ url_for('display_table', filename='display.html') }}">Display</a>
+            <a href="">Source Code</a>
+          </div>
         </div>
-        <div class="text_background"></div>
-        <a href="{{ url_for('display_table', filename='display.html') }}">Display</a>
       </div>
     </div>
     {# End Main #}
+    {# <script src="/static/js/script.js"></script> #}
   </body>
 </html>

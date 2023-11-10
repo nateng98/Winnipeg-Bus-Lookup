@@ -4,6 +4,8 @@ Making use of Python and SQL, this project establishes a comprehensive database 
 
 ## Requirements (for Linux)
 
+- Install ODBC Driver for Linux
+
 - Install Python
   
 ```bash
