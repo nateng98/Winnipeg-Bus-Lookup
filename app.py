@@ -29,7 +29,15 @@ def display_table():
 @app.route('/query1', methods=['POST'])
 def query1():
   cursor = conn.cursor()
-  cursor.execute('SELECT * FROM People INNER JOIN Orders ON People.personID = Orders.personID')
+  cursor.execute('''
+                select products.productID, cast(products.prodName as varchar) as prodName, price,
+                count(orderLineItems.productID) as numberSold,
+                count(orderLineItems.productID) * price as total
+                from products
+                left join orderLineItems on products.productID = orderLineItems.productID
+                group by products.productID, cast(products.prodName as varchar), price
+                order by numberSold desc
+                 ''')
   result = cursor.fetchall()
     
   # Get the column names from cursor description
@@ -39,8 +47,18 @@ def query1():
 
 @app.route('/query2', methods=['POST'])
 def query2():
+  provinceID = request.form['province']
+  prodName = request.form['prodName']
   cursor = conn.cursor()
-  cursor.execute('SELECT prodName FROM Products as p LEFT JOIN viewed as v on v.productID=p.productID LEFT JOIN orderLineItems as o ON o.productID=p.productID WHERE o.orderID is NULL and v.productID is NULL')
+  cursor.execute(f'''
+                SELECT cast(people.firstname as varchar) as firstname, cast(people.lastname as varchar) as lastname
+                FROM people
+                JOIN orders ON people.personID = orders.personID
+                JOIN orderLineItems ON orders.orderID = orderLineItems.orderID
+                JOIN products ON orderLineItems.productID = products.productID
+                WHERE convert(varchar, people.provinceID) = '{provinceID}' 
+                and convert(varchar, products.prodName) = '{prodName}'
+                 ''')
   result = cursor.fetchall()
     
   # Get the column names from cursor description
@@ -53,12 +71,12 @@ def query3():
   cursor = conn.cursor()
   cursor.execute('''
                   SELECT cast(people.firstname as VARCHAR) as firstname, cast(people.lastname as VARCHAR) as lastname FROM people
-                  WHERE people.provinceID = 'MB'
+                  WHERE convert(varchar, people.provinceID) = 'MB'
                   EXCEPT
                   SELECT cast(people.firstname as VARCHAR), cast(people.lastname as VARCHAR) FROM people
-                  INNER JOIN orders ON people.personID = orders.personID
-                  INNER JOIN orderLineItems ON orders.orderID = orderLineItems.orderID
-                  INNER JOIN products ON orderLineItems.productID = products.productID
+                  JOIN orders ON people.personID = orders.personID
+                  JOIN orderLineItems ON orders.orderID = orderLineItems.orderID
+                  JOIN products ON orderLineItems.productID = products.productID
                   WHERE products.price > 99
                   ''')
   result = cursor.fetchall()
@@ -74,12 +92,12 @@ def query4():
   cursor.execute('''
                   SELECT DISTINCT cast(prodName as VARCHAR) as prodName
                   FROM products p
-                  INNER JOIN viewed v ON p.productID = v.productID
-                  INNER JOIN people pe ON v.personID = pe.personID
+                  JOIN viewed v ON p.productID = v.productID
+                  JOIN people pe ON v.personID = pe.personID
                   LEFT JOIN (
                       SELECT ioo.productID, o.personID
                       FROM orderLineItems ioo
-                      INNER JOIN orders o ON ioo.orderID = o.orderID
+                      JOIN orders o ON ioo.orderID = o.orderID
                   ) o ON p.productID = o.productID AND v.personID = o.personID
                   WHERE pe.provinceID = 'MB';
                   ''')
@@ -97,12 +115,12 @@ def query5():
   cursor.execute(f'''
                   SELECT DISTINCT cast(prodName as VARCHAR) as prodName
                   FROM products p
-                  INNER JOIN viewed v ON p.productID = v.productID
-                  INNER JOIN people pe ON v.personID = pe.personID
+                  JOIN viewed v ON p.productID = v.productID
+                  JOIN people pe ON v.personID = pe.personID
                   LEFT JOIN (
                       SELECT ioo.productID, o.personID
                       FROM orderLineItems ioo
-                      INNER JOIN orders o ON ioo.orderID = o.orderID
+                      JOIN orders o ON ioo.orderID = o.orderID
                   ) o ON p.productID = o.productID AND v.personID = o.personID
                   WHERE pe.provinceID = '{provinceID}';
                   ''')

@@ -40,44 +40,49 @@
   <div class="main_body">
     {# Lists of queries #}
     <div class="left-div form_container">
-      <button id="closePopup">X</button>
-      <form id="queryForm" action="/query1" method="post">
-        <input type="submit" value="Query 1" />
+      <h3>List of Queries</h3>
+      <form action="/query1" method="post">
+        <p>Name of products, their price and total price of all order of the products</p>
+        <input class="execute" type="submit" value="▷ Execute" />
       </form>
+
       <form action="/query2" method="post">
-        <input type="submit" value="Query 2" />
+        <p>People's first and lastname (no duplicate) that 
+        live in MB
+          <label for="province">[provinceID] </label>
+          <input class="user_input" type="text" id="province" name="province" required />
+        and have bought a quick chop
+          <label for="product">[prodName] </label>
+          <input class="user_input" type="text" id="prodName" name="prodName" required />
+        </p>
+        <input class="execute" type="submit" value="▷ Execute" />
       </form>
+
       <form action="/query3" method="post">
-        <input type="submit" value="Query 3" />
+        <p>People in MB that have not bought a product that is over $99</p>
+        <input class="execute" type="submit" value="▷ Execute" />
       </form>
       <form action="/query4" method="post">
-        <input type="submit" value="Query 4" />
+        <p>Product names for products viewed by a person but not
+          bought by that person, for all people that live in Manitoba
+        </p>
+        <input class="execute" type="submit" value="▷ Execute" />
       </form>
+
       <form action="/query5" method="post">
-        <label for="province">provinceID: </label>
-        <input type="text" id="province" name="province" required />
-        <input type="submit" value="Query 5" />
+        <p>Product names for products viewed by a person but not
+          bought by that person, for all people that live in 
+          <label for="province">[provinceID] </label>
+          <input class="user_input" type="text" id="province" name="province" required />  
+        </p>
+        <input class="execute" type="submit" value="▷ Execute" />
       </form>
+      {# <button id="closePopup">X</button> #}
     </div>
 
     {# result #}
-    <div id="popupContainer" class="right-div">
+    <div id="popupContainer" class="right-div animate__animated animate__fadeIn">
       <div id="popupContent">
-
-        {# <table border="1">
-          <tr>
-            {% for col in columns %}
-            <th>{{ col }}</th>
-            {% endfor %}
-          </tr>
-          {% for row in result %}
-          <tr>
-            {% for val in row %}
-            <td>{{ val }}</td>
-            {% endfor %}
-          </tr>
-          {% endfor %}
-        </table> #}
 
         <table border="1" id="myTable">
           <thead>
