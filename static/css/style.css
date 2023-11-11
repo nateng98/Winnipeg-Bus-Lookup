@@ -327,7 +327,7 @@ body {
   margin: 5px;
   padding: 10px;
   /* border: 0px solid rgb(27, 60, 131); */
-  border-radius: 20px 5px 20px;
+  border-radius: 20px 2px 20px;
   background: rgba(64, 103, 187, 0.2);
   box-shadow: 4px 4px 3px rgba(10, 28, 66, 0.2);
 }
