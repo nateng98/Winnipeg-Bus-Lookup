@@ -5,6 +5,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Winnipeg Bus Lookup</title>
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/bus.ico') }}">
+
+  {# CSS #}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.min.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
@@ -34,9 +37,10 @@
     </div>
   </header>
 
-  {# Lists of queries #}
   <div class="main_body">
+    {# Lists of queries #}
     <div class="left-div form_container">
+      <button id="closePopup">X</button>
       <form id="queryForm" action="/query1" method="post">
         <input type="submit" value="Query 1" />
       </form>
@@ -58,9 +62,9 @@
 
     {# result #}
     <div id="popupContainer" class="right-div">
-      <button id="closePopup">X</button>
       <div id="popupContent">
-        <table border="1">
+
+        {# <table border="1">
           <tr>
             {% for col in columns %}
             <th>{{ col }}</th>
@@ -73,7 +77,29 @@
             {% endfor %}
           </tr>
           {% endfor %}
+        </table> #}
+
+        <table border="1" id="myTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              {% for col in columns %}
+              <th>{{ col }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in result %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              {% for val in row %}
+              <td>{{ val }}</td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
         </table>
+
       </div>
     </div>
   </div>
