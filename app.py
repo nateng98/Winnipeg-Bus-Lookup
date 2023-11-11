@@ -1,19 +1,38 @@
 """
 Connects to a SQL database using pyodbc
 """
+import configparser
 from flask import Flask, render_template, request
 import pyodbc as odbc
 
 app = Flask(__name__)
 
-#  Your connection details
-driver_name = 'ODBC Driver 18 for SQL Server'
-server_name = 'DESKTOP-310T804'
-database_name = 'products'
+def read_config(file_path):
+  config = configparser.ConfigParser()
+  config.read(file_path)
+  return config
 
-# Create connection string
-connection_string = f'DRIVER={{{driver_name}}};SERVER={server_name};DATABASE={database_name};LongAsMax=yes;Encrypt=no;Trusted_Connection=yes;'
+config_file = 'config.ini'
+config = read_config(config_file)
 
+# Access values from the configuration file
+driver_name = config.get('Database', 'Driver')
+server_name = config.get('Database', 'Server')
+database_name = config.get('Database', 'Database')
+user = config.get('Database', 'User')
+password = config.get('Database', 'Password')
+encrypt = config.get('Database', 'Encrypt')
+trusted_connection = config.get('Database', 'Trusted_Connection')
+
+connection_string = (
+  f'DRIVER={{{driver_name}}};'
+  f'SERVER={server_name};'
+  f'DATABASE={database_name};'
+  # f'UID={user};'
+  # f'PWD={password};'
+  f'Encrypt={encrypt};'
+  f'Trusted_Connection={trusted_connection};'
+)
 conn = odbc.connect(connection_string)
 cursor = conn.cursor()
 
