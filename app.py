@@ -1,9 +1,11 @@
 """
-Connects to a SQL database using pyodbc
+Connects to a SQL database using pymssql
 """
 import configparser
 from flask import Flask, render_template, request
-import pyodbc as odbc
+
+# import pyodbc as odbc
+import pymssql as mssql
 
 app = Flask(__name__)
 
@@ -15,25 +17,39 @@ def read_config(file_path):
 config_file = 'config.ini'
 config = read_config(config_file)
 
-# Access values from the configuration file
-driver_name = config.get('Database', 'Driver')
+# LOCALHOST - Access values from the configuration file (config.ini)
+# driver_name = config.get('Database', 'Driver')
+# server_name = config.get('Database', 'Server')
+# database_name = config.get('Database', 'Database')
+# encrypt = config.get('Database', 'Encrypt')
+# trusted_connection = config.get('Database', 'Trusted_Connection')
+
+# This is the connection string for pyodbc
+# connection_string = (
+#   f'DRIVER={{{driver_name}}};'
+#   f'SERVER={server_name};'
+#   f'DATABASE={database_name};'
+#   # f'UID={user};'
+#   # f'PWD={password};'
+#   f'Encrypt={encrypt};'
+#   f'Trusted_Connection={trusted_connection};'
+# )
+# conn = odbc.connect(connection_string)
+
+
+# URANIUM - Access values from the configuration file (config.ini)
 server_name = config.get('Database', 'Server')
-database_name = config.get('Database', 'Database')
 user = config.get('Database', 'User')
 password = config.get('Database', 'Password')
-encrypt = config.get('Database', 'Encrypt')
-trusted_connection = config.get('Database', 'Trusted_Connection')
+database_name = config.get('Database', 'Database')
 
-connection_string = (
-  f'DRIVER={{{driver_name}}};'
-  f'SERVER={server_name};'
-  f'DATABASE={database_name};'
-  # f'UID={user};'
-  # f'PWD={password};'
-  f'Encrypt={encrypt};'
-  f'Trusted_Connection={trusted_connection};'
+conn = mssql.connect(
+  server=server_name,
+  user=user,
+  password=password,
+  database=database_name
 )
-conn = odbc.connect(connection_string)
+
 cursor = conn.cursor()
 
 @app.route('/')
@@ -49,14 +65,14 @@ def display_table():
 def query1():
   cursor = conn.cursor()
   cursor.execute('''
-                select products.productID, cast(products.prodName as varchar) as prodName, price,
-                count(orderLineItems.productID) as numberSold,
-                count(orderLineItems.productID) * price as total
-                from products
-                left join orderLineItems on products.productID = orderLineItems.productID
-                group by products.productID, cast(products.prodName as varchar), price
-                order by numberSold desc
-                 ''')
+    select products.productID, cast(products.prodName as varchar) as prodName, price,
+    count(orderLineItems.productID) as numberSold,
+    count(orderLineItems.productID) * price as total
+    from products
+    left join orderLineItems on products.productID = orderLineItems.productID
+    group by products.productID, cast(products.prodName as varchar), price
+    order by numberSold desc
+  ''')
   result = cursor.fetchall()
     
   # Get the column names from cursor description
@@ -70,14 +86,14 @@ def query2():
   prodName = request.form['prodName']
   cursor = conn.cursor()
   cursor.execute(f'''
-                SELECT cast(people.firstname as varchar) as firstname, cast(people.lastname as varchar) as lastname
-                FROM people
-                JOIN orders ON people.personID = orders.personID
-                JOIN orderLineItems ON orders.orderID = orderLineItems.orderID
-                JOIN products ON orderLineItems.productID = products.productID
-                WHERE convert(varchar, people.provinceID) = '{provinceID}' 
-                and convert(varchar, products.prodName) = '{prodName}'
-                 ''')
+    SELECT cast(people.firstname as varchar) as firstname, cast(people.lastname as varchar) as lastname
+    FROM people
+    JOIN orders ON people.personID = orders.personID
+    JOIN orderLineItems ON orders.orderID = orderLineItems.orderID
+    JOIN products ON orderLineItems.productID = products.productID
+    WHERE convert(varchar, people.provinceID) = '{provinceID}' 
+    and convert(varchar, products.prodName) = '{prodName}'
+  ''')
   result = cursor.fetchall()
     
   # Get the column names from cursor description
@@ -89,15 +105,15 @@ def query2():
 def query3():
   cursor = conn.cursor()
   cursor.execute('''
-                  SELECT cast(people.firstname as VARCHAR) as firstname, cast(people.lastname as VARCHAR) as lastname FROM people
-                  WHERE convert(varchar, people.provinceID) = 'MB'
-                  EXCEPT
-                  SELECT cast(people.firstname as VARCHAR), cast(people.lastname as VARCHAR) FROM people
-                  JOIN orders ON people.personID = orders.personID
-                  JOIN orderLineItems ON orders.orderID = orderLineItems.orderID
-                  JOIN products ON orderLineItems.productID = products.productID
-                  WHERE products.price > 99
-                  ''')
+    SELECT cast(people.firstname as VARCHAR) as firstname, cast(people.lastname as VARCHAR) as lastname FROM people
+    WHERE convert(varchar, people.provinceID) = 'MB'
+    EXCEPT
+    SELECT cast(people.firstname as VARCHAR), cast(people.lastname as VARCHAR) FROM people
+    JOIN orders ON people.personID = orders.personID
+    JOIN orderLineItems ON orders.orderID = orderLineItems.orderID
+    JOIN products ON orderLineItems.productID = products.productID
+    WHERE products.price > 99
+  ''')
   result = cursor.fetchall()
     
   # Get the column names from cursor description
@@ -109,17 +125,17 @@ def query3():
 def query4():
   cursor = conn.cursor()
   cursor.execute('''
-                  SELECT DISTINCT cast(prodName as VARCHAR) as prodName
-                  FROM products p
-                  JOIN viewed v ON p.productID = v.productID
-                  JOIN people pe ON v.personID = pe.personID
-                  LEFT JOIN (
-                      SELECT ioo.productID, o.personID
-                      FROM orderLineItems ioo
-                      JOIN orders o ON ioo.orderID = o.orderID
-                  ) o ON p.productID = o.productID AND v.personID = o.personID
-                  WHERE pe.provinceID = 'MB';
-                  ''')
+    SELECT DISTINCT cast(prodName as VARCHAR) as prodName
+    FROM products p
+    JOIN viewed v ON p.productID = v.productID
+    JOIN people pe ON v.personID = pe.personID
+    LEFT JOIN (
+        SELECT ioo.productID, o.personID
+        FROM orderLineItems ioo
+        JOIN orders o ON ioo.orderID = o.orderID
+    ) o ON p.productID = o.productID AND v.personID = o.personID
+    WHERE pe.provinceID = 'MB';
+  ''')
   result = cursor.fetchall()
     
   # Get the column names from cursor description
@@ -132,17 +148,17 @@ def query5():
   provinceID = request.form['province']
   cursor = conn.cursor()
   cursor.execute(f'''
-                  SELECT DISTINCT cast(prodName as VARCHAR) as prodName
-                  FROM products p
-                  JOIN viewed v ON p.productID = v.productID
-                  JOIN people pe ON v.personID = pe.personID
-                  LEFT JOIN (
-                      SELECT ioo.productID, o.personID
-                      FROM orderLineItems ioo
-                      JOIN orders o ON ioo.orderID = o.orderID
-                  ) o ON p.productID = o.productID AND v.personID = o.personID
-                  WHERE pe.provinceID = '{provinceID}';
-                  ''')
+    SELECT DISTINCT cast(prodName as VARCHAR) as prodName
+    FROM products p
+    JOIN viewed v ON p.productID = v.productID
+    JOIN people pe ON v.personID = pe.personID
+    LEFT JOIN (
+        SELECT ioo.productID, o.personID
+        FROM orderLineItems ioo
+        JOIN orders o ON ioo.orderID = o.orderID
+    ) o ON p.productID = o.productID AND v.personID = o.personID
+    WHERE pe.provinceID = '{provinceID}';
+  ''')
   result = cursor.fetchall()
     
   # Get the column names from cursor description
