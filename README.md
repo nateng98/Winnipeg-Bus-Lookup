@@ -64,7 +64,7 @@ Edit `config.ini`
 ; | uncomment this section
 ; V
 ; ==== LOCALHOST (Windows) ====
-; Driver = ODBC Driver 18 for SQL Server ;(often )
+; Driver = ODBC Driver 18 for SQL Server ;(if the most recent driver is installed)
 ; Server = [localhost server]
 ; Database = cc3380
 ; Encrypt = no
