@@ -4,31 +4,99 @@ Making use of Python and SQL, this project establishes a comprehensive database 
 
 ## Requirements (for Linux)
 
-- Install Python
-  
-```bash
-sudo apt install python3
-```
+- Python 3.
+- Flask
+- pymssql
 
-- Install pip
-
-```bash
-sudo apt install python3-pip
-```
-
-- Install Flask and pyodbc (html rendering and database)
-
-```bash
-pip install Flask pyodbc
-```
+*(Already been installed on Aviary)*
 
 ## Configuration
+
+```
+; ==== URANIUM ====
+Server = uranium.cs.umanitoba.ca
+User = [username]
+Password = [password]
+Database = cs3380
+```
+
+* Note: In any case that require you to run the web application on your local machine, comment URANIUM section and uncomment LOCALHOST section in both `app.py` and `config.ini`
+
+Edit `app.py`
+```py
+# | uncomment this section
+# V
+# LOCALHOST - Access values from the configuration file (config.ini)
+# driver_name = config.get('Database', 'Driver')
+# server_name = config.get('Database', 'Server')
+# database_name = config.get('Database', 'Database')
+# encrypt = config.get('Database', 'Encrypt')
+# trusted_connection = config.get('Database', 'Trusted_Connection')
+
+# This is the connection string for pyodbc
+# connection_string = (
+#   f'DRIVER={{{driver_name}}};'
+#   f'SERVER={server_name};'
+#   f'DATABASE={database_name};'
+#   f'Encrypt={encrypt};'
+#   f'Trusted_Connection={trusted_connection};'
+# )
+# conn = odbc.connect(connection_string)
+
+# | comment this section
+# V
+# URANIUM - Access values from the configuration file (config.ini)
+server_name = config.get('Database', 'Server')
+user = config.get('Database', 'User')
+password = config.get('Database', 'Password')
+database_name = config.get('Database', 'Database')
+
+conn = mssql.connect(
+  server=server_name,
+  user=user,
+  password=password,
+  database=database_name
+)
+```
+
+Edit `config.ini`
+```
+; | uncomment this section
+; V
+; ==== LOCALHOST (Windows) ====
+; Driver = ODBC Driver 18 for SQL Server ;(often )
+; Server = [localhost server]
+; Database = cc3380
+; Encrypt = no
+; Trusted_Connection = yes
+
+; | comment this section
+; V
+; ==== URANIUM ====
+Server = uranium.cs.umanitoba.ca
+User = [username]
+Password = [password]
+Database = cs3380
+```
 
 ## How to run
 
 1. `cd Winnipeg-Bus-Lookup`
-2. Run python app `flask run`
-3. Open in browser [http://localhost:5000](http://localhost:5000)
+2. Run python app `python3 app.py`
+3. Open in browser `http://[random_name].cs.umanitoba.ca:5000`
+
+Example output on console
+```bash
+[nguyen74@crow Winnipeg-Bus-Lookup]> python3 app.py
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://crow.cs.umanitoba.ca:5000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 108-967-247
+```
 
 ## Authors
 
