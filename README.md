@@ -25,7 +25,7 @@ Database = cs3380
 Edit `app.py`
 ```py
 # | uncomment this section
-# V
+# ▼
 # LOCALHOST - Access values from the configuration file (config.ini)
 # driver_name = config.get('Database', 'Driver')
 # server_name = config.get('Database', 'Server')
@@ -44,7 +44,7 @@ Edit `app.py`
 # conn = odbc.connect(connection_string)
 
 # | comment this section
-# V
+# ▼
 # URANIUM - Access values from the configuration file (config.ini)
 server_name = config.get('Database', 'Server')
 user = config.get('Database', 'User')
@@ -62,7 +62,7 @@ conn = mssql.connect(
 Edit `config.ini`
 ```
 ; | uncomment this section
-; V
+; ▼
 ; ==== LOCALHOST (Windows) ====
 ; Driver = ODBC Driver 18 for SQL Server ;(if the most recent driver is installed)
 ; Server = [localhost server]
@@ -71,7 +71,7 @@ Edit `config.ini`
 ; Trusted_Connection = yes
 
 ; | comment this section
-; V
+; ▼
 ; ==== URANIUM ====
 Server = uranium.cs.umanitoba.ca
 User = [username]
