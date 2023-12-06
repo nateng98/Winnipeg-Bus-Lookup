@@ -29,8 +29,6 @@ config = read_config(config_file)
 #   f'DRIVER={{{driver_name}}};'
 #   f'SERVER={server_name};'
 #   f'DATABASE={database_name};'
-#   # f'UID={user};'
-#   # f'PWD={password};'
 #   f'Encrypt={encrypt};'
 #   f'Trusted_Connection={trusted_connection};'
 # )
