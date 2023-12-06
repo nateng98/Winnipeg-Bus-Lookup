@@ -26,14 +26,14 @@ Edit `app.py`
 ```py
 # | uncomment this section
 # ▼
-# LOCALHOST - Access values from the configuration file (config.ini)
+# # LOCALHOST - Access values from the configuration file (config.ini)
 # driver_name = config.get('Database', 'Driver')
 # server_name = config.get('Database', 'Server')
 # database_name = config.get('Database', 'Database')
 # encrypt = config.get('Database', 'Encrypt')
 # trusted_connection = config.get('Database', 'Trusted_Connection')
 
-# This is the connection string for pyodbc
+# # This is the connection string for pyodbc
 # connection_string = (
 #   f'DRIVER={{{driver_name}}};'
 #   f'SERVER={server_name};'
