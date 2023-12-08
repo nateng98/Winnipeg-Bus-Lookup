@@ -12,6 +12,8 @@ Making use of Python and SQL, this project establishes a comprehensive database 
 
 ## Configuration
 
+Edit the `config.ini` file
+
 ```
 ; ==== URANIUM ====
 Server = uranium.cs.umanitoba.ca
@@ -23,6 +25,15 @@ Database = cs3380
 * Note: In any case that require you to run the web application on your local machine, comment URANIUM section and uncomment LOCALHOST section in both `app.py` and `config.ini`
 
 Edit `app.py`
+```py
+# | uncomment this line
+# ▼
+# import pyodbc as odbc
+
+# | comment this line
+# ▼
+import pymssql as mssql
+```
 ```py
 # | uncomment this section
 # ▼

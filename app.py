@@ -4,8 +4,13 @@ Connects to a SQL database using pymssql
 import configparser
 from flask import Flask, render_template, request
 
+# import pyodbc as odbc to run on local windows machine
 # import pyodbc as odbc
+
 import pymssql as mssql
+
+# import socket to get hostname of aviary
+import socket
 
 app = Flask(__name__)
 
@@ -59,17 +64,15 @@ def display_table():
   return render_template('display.html')
 
 #   return render_template('display_table.html', table_rows=table_rows)
+
+# ====================================================================================================
+# ====================================================================================================
 @app.route('/query1', methods=['POST'])
 def query1():
   cursor = conn.cursor()
   cursor.execute('''
-    select products.productID, cast(products.prodName as varchar) as prodName, price,
-    count(orderLineItems.productID) as numberSold,
-    count(orderLineItems.productID) * price as total
-    from products
-    left join orderLineItems on products.productID = orderLineItems.productID
-    group by products.productID, cast(products.prodName as varchar), price
-    order by numberSold desc
+    select stop_number,route_number, route_destination from Arrival
+    where arrival_id between 151636 and 203924;
   ''')
   result = cursor.fetchall()
     
@@ -77,92 +80,98 @@ def query1():
   columns = [column[0] for column in cursor.description]
     
   return render_template('display.html', columns=columns, result=result)
-
-@app.route('/query2', methods=['POST'])
-def query2():
-  provinceID = request.form['province']
-  prodName = request.form['prodName']
-  cursor = conn.cursor()
-  cursor.execute(f'''
-    SELECT cast(people.firstname as varchar) as firstname, cast(people.lastname as varchar) as lastname
-    FROM people
-    JOIN orders ON people.personID = orders.personID
-    JOIN orderLineItems ON orders.orderID = orderLineItems.orderID
-    JOIN products ON orderLineItems.productID = products.productID
-    WHERE convert(varchar, people.provinceID) = '{provinceID}' 
-    and convert(varchar, products.prodName) = '{prodName}'
-  ''')
-  result = cursor.fetchall()
+# ====================================================================================================
+# # ====================================================================================================
+# @app.route('/query2', methods=['POST'])
+# def query2():
+#   provinceID = request.form['province']
+#   prodName = request.form['prodName']
+#   cursor = conn.cursor()
+#   cursor.execute(f'''
+#     SELECT cast(people.firstname as varchar) as firstname, cast(people.lastname as varchar) as lastname
+#     FROM people
+#     JOIN orders ON people.personID = orders.personID
+#     JOIN orderLineItems ON orders.orderID = orderLineItems.orderID
+#     JOIN products ON orderLineItems.productID = products.productID
+#     WHERE convert(varchar, people.provinceID) = '{provinceID}' 
+#     and convert(varchar, products.prodName) = '{prodName}'
+#   ''')
+#   result = cursor.fetchall()
     
-  # Get the column names from cursor description
-  columns = [column[0] for column in cursor.description]
+#   # Get the column names from cursor description
+#   columns = [column[0] for column in cursor.description]
     
-  return render_template('display.html', columns=columns, result=result)
-  
-@app.route('/query3', methods=['POST'])
-def query3():
-  cursor = conn.cursor()
-  cursor.execute('''
-    SELECT cast(people.firstname as VARCHAR) as firstname, cast(people.lastname as VARCHAR) as lastname FROM people
-    WHERE convert(varchar, people.provinceID) = 'MB'
-    EXCEPT
-    SELECT cast(people.firstname as VARCHAR), cast(people.lastname as VARCHAR) FROM people
-    JOIN orders ON people.personID = orders.personID
-    JOIN orderLineItems ON orders.orderID = orderLineItems.orderID
-    JOIN products ON orderLineItems.productID = products.productID
-    WHERE products.price > 99
-  ''')
-  result = cursor.fetchall()
+#   return render_template('display.html', columns=columns, result=result)
+# # ====================================================================================================
+# # ====================================================================================================
+# @app.route('/query3', methods=['POST'])
+# def query3():
+#   cursor = conn.cursor()
+#   cursor.execute('''
+#     SELECT cast(people.firstname as VARCHAR) as firstname, cast(people.lastname as VARCHAR) as lastname FROM people
+#     WHERE convert(varchar, people.provinceID) = 'MB'
+#     EXCEPT
+#     SELECT cast(people.firstname as VARCHAR), cast(people.lastname as VARCHAR) FROM people
+#     JOIN orders ON people.personID = orders.personID
+#     JOIN orderLineItems ON orders.orderID = orderLineItems.orderID
+#     JOIN products ON orderLineItems.productID = products.productID
+#     WHERE products.price > 99
+#   ''')
+#   result = cursor.fetchall()
     
-  # Get the column names from cursor description
-  columns = [column[0] for column in cursor.description]
+#   # Get the column names from cursor description
+#   columns = [column[0] for column in cursor.description]
     
-  return render_template('display.html', columns=columns, result=result)
-
-@app.route('/query4', methods=['POST'])
-def query4():
-  cursor = conn.cursor()
-  cursor.execute('''
-    SELECT DISTINCT cast(prodName as VARCHAR) as prodName
-    FROM products p
-    JOIN viewed v ON p.productID = v.productID
-    JOIN people pe ON v.personID = pe.personID
-    LEFT JOIN (
-        SELECT ioo.productID, o.personID
-        FROM orderLineItems ioo
-        JOIN orders o ON ioo.orderID = o.orderID
-    ) o ON p.productID = o.productID AND v.personID = o.personID
-    WHERE pe.provinceID = 'MB';
-  ''')
-  result = cursor.fetchall()
+#   return render_template('display.html', columns=columns, result=result)
+# # ====================================================================================================
+# # ====================================================================================================
+# @app.route('/query4', methods=['POST'])
+# def query4():
+#   cursor = conn.cursor()
+#   cursor.execute('''
+#     SELECT DISTINCT cast(prodName as VARCHAR) as prodName
+#     FROM products p
+#     JOIN viewed v ON p.productID = v.productID
+#     JOIN people pe ON v.personID = pe.personID
+#     LEFT JOIN (
+#         SELECT ioo.productID, o.personID
+#         FROM orderLineItems ioo
+#         JOIN orders o ON ioo.orderID = o.orderID
+#     ) o ON p.productID = o.productID AND v.personID = o.personID
+#     WHERE pe.provinceID = 'MB';
+#   ''')
+#   result = cursor.fetchall()
     
-  # Get the column names from cursor description
-  columns = [column[0] for column in cursor.description]
+#   # Get the column names from cursor description
+#   columns = [column[0] for column in cursor.description]
     
-  return render_template('display.html', columns=columns, result=result)
-
-@app.route('/query5', methods=['POST'])
-def query5():
-  provinceID = request.form['province']
-  cursor = conn.cursor()
-  cursor.execute(f'''
-    SELECT DISTINCT cast(prodName as VARCHAR) as prodName
-    FROM products p
-    JOIN viewed v ON p.productID = v.productID
-    JOIN people pe ON v.personID = pe.personID
-    LEFT JOIN (
-        SELECT ioo.productID, o.personID
-        FROM orderLineItems ioo
-        JOIN orders o ON ioo.orderID = o.orderID
-    ) o ON p.productID = o.productID AND v.personID = o.personID
-    WHERE pe.provinceID = '{provinceID}';
-  ''')
-  result = cursor.fetchall()
+#   return render_template('display.html', columns=columns, result=result)
+# # ====================================================================================================
+# # ====================================================================================================
+# @app.route('/query5', methods=['POST'])
+# def query5():
+#   provinceID = request.form['province']
+#   cursor = conn.cursor()
+#   cursor.execute(f'''
+#     SELECT DISTINCT cast(prodName as VARCHAR) as prodName
+#     FROM products p
+#     JOIN viewed v ON p.productID = v.productID
+#     JOIN people pe ON v.personID = pe.personID
+#     LEFT JOIN (
+#         SELECT ioo.productID, o.personID
+#         FROM orderLineItems ioo
+#         JOIN orders o ON ioo.orderID = o.orderID
+#     ) o ON p.productID = o.productID AND v.personID = o.personID
+#     WHERE pe.provinceID = '{provinceID}';
+#   ''')
+#   result = cursor.fetchall()
     
-  # Get the column names from cursor description
-  columns = [column[0] for column in cursor.description]
+#   # Get the column names from cursor description
+#   columns = [column[0] for column in cursor.description]
     
-  return render_template('display.html', columns=columns, result=result)
+#   return render_template('display.html', columns=columns, result=result)
+# ====================================================================================================
 
 if __name__ == '__main__':
+  host_name = socket.gethostname()
   app.run(debug=True)
