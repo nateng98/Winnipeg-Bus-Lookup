@@ -42,42 +42,84 @@
     <div class="left-div form_container">
       <h3>QUERIES</h3>
       <form action="/query1" method="post">
-        <p>Get all stop number, route number and route_destination where stop id is between 151636 and 203924</p>
+        <p>List all bus routes along with their stops</p>
         <input class="execute" type="submit" value="▷ Execute" />
       </form>
 
-      {# <form action="/query2" method="post">
-        <p>People's first and lastname (no duplicate) that 
-        live in MB
-          <label for="province">[provinceID] </label>
-          <input class="user_input" type="text" id="province" name="province" required />
-        and have bought a quick chop
-          <label for="product">[prodName] </label>
-          <input class="user_input" type="text" id="prodName" name="prodName" required />
+      <form action="/query2" method="post">
+        <p>Find the busiest hour for a specific route
+          <input class="user_input" type="text" id="route_num" name="route_num" placeholder="e.g.BLUE" required />
+        on a particular day
+          <input class="user_input" type="text" id="the_date" name="the_date" placeholder="e.g.2022-07-16" required />
         </p>
         <input class="execute" type="submit" value="▷ Execute" />
       </form>
 
       <form action="/query3" method="post">
-        <p>People in MB that have not bought a product that is over $99</p>
+        <p>Retrieve top # 
+          <input class="user_input" type="text" id="top_num" name="top_num" placeholder="e.g.10" required />
+        the weather conditions during days with the highest total traffic</p>
         <input class="execute" type="submit" value="▷ Execute" />
       </form>
 
       <form action="/query4" method="post">
-        <p>Product names for products viewed by a person but not
-          bought by that person, for all people that live in Manitoba
+        <p>List routes that experienced pass-ups due to certain amount 
+          <input class="user_input" type="text" id="traffic" name="traffic" placeholder="e.g.100" required />
+        of traffic on a specific date
         </p>
         <input class="execute" type="submit" value="▷ Execute" />
       </form>
       
       <form action="/query5" method="post">
-        <p>Product names for products viewed by a person but not
-          bought by that person, for all people that live in 
-          <label for="province">[provinceID] </label>
-          <input class="user_input" type="text" id="province" name="province" required />  
+        <p>Identify days with unusually high deviations across all routes 
         </p>
         <input class="execute" type="submit" value="▷ Execute" />
-      </form> #}
+      </form>
+
+      <form action="/query6" method="post">
+        <p>Find
+          <input class="user_input" type="text" id="top_num" name="top_num" placeholder="e.g.10" /> 
+          the stops where the number of boardings significantly differs from alightings 
+        </p>
+        <input class="execute" type="submit" value="▷ Execute" />
+      </form>
+
+      <form action="/query7" method="post">
+        <p>Compares the average deviation before and after the route was created. Select the date:
+        <input class="user_input" type="text" id="the_date" name="the_date" placeholder="e.g.2022-07-16" required />
+        </p>
+        <input class="execute" type="submit" value="▷ Execute" />
+      </form>
+
+      <form action="/query8" method="post">
+        <p>Find routes with the highest average deviations
+        </p>
+        <input class="execute" type="submit" value="▷ Execute" />
+      </form>
+
+      <form action="/query8" method="post">
+        <p>Identify stops with the highest and lowest traffic on a specific date and time
+        </p>
+        <input class="execute" type="submit" value="▷ Execute" />
+      </form>
+
+      <form action="/query9" method="post">
+        <p>Identify stops with the highest and lowest traffic on a specific date and time
+        </p>
+        <input class="execute" type="submit" value="▷ Execute" />
+      </form>
+
+      <form action="/query10" method="post">
+        <p>Weather and Traffic Adventure - Discover the Best Weather Days with Low Traffic
+        </p>
+        <input class="execute" type="submit" value="▷ Execute" />
+      </form>
+
+      <form action="/query11" method="post">
+        <p>Conditional Aggregation of Arrival Deviations
+        </p>
+        <input class="execute" type="submit" value="▷ Execute" />
+      </form>
 
       {# <button id="closePopup">X</button> #}
     </div>
