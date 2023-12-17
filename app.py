@@ -311,4 +311,4 @@ def query11():
 
 if __name__ == '__main__':
   host_name = socket.gethostname()
-  app.run(host = host_name, port=5000, debug=True)
+  app.run(debug=True)
